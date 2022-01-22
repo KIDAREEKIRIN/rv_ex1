@@ -1,5 +1,6 @@
 package com.personal.rv_ex1;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +15,22 @@ import java.util.ArrayList;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.CustomViewHolder>{
 
-    private ArrayList<MainData> arrayList;
+    private ArrayList<MainData> arrayList = null;
+    private Context context;
 
-    public MainAdapter(ArrayList<MainData> arrayList) {
+    public interface OnItemClickListener {
+        void onItemClick(View v, int pos);
+    }
+
+    private OnItemClickListener mListener = null;
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.mListener = listener;
+    }
+
+    public MainAdapter(ArrayList<MainData> arrayList)
+
+    {
         this.arrayList = arrayList;
     }
 
@@ -24,8 +38,9 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.CustomViewHold
     @Override
     public MainAdapter.CustomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list,parent,false);
-        CustomViewHolder holder = new CustomViewHolder(view);
+        context = parent.getContext(); // 정의 여부에 따라서 밑의 from 괄호 안의 내용이 달라짐.
+        View view = LayoutInflater.from(context).inflate(R.layout.item_list,parent,false);
+        CustomViewHolder holder = new CustomViewHolder(view); // CustomViewHolder에 대한 부분. 새롭게 정의하여 이후에 return 값을 holder로 받음.
 
         return holder;
     }
@@ -37,23 +52,23 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.CustomViewHold
         holder.tv_name.setText(arrayList.get(position).getTv_name());
         holder.tv_content.setText(arrayList.get(position).getTv_content());
 
-        holder.itemView.setTag(position);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // getText() 까지는 Object 형태라서 뒤에 toString()을 붙여 string값으로 바꿔준다.
-                String curName = holder.tv_name.getText().toString();
-                Toast.makeText(v.getContext(), curName, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                remove(holder.getAbsoluteAdapterPosition());
-                return true;
-            }
-        });
+//        holder.itemView.setTag(position);
+//        holder.itemView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // getText() 까지는 Object 형태라서 뒤에 toString()을 붙여 string값으로 바꿔준다.
+//                String curName = holder.tv_name.getText().toString();
+//                Toast.makeText(v.getContext(), curName, Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//
+//        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View v) {
+//                remove(holder.getAbsoluteAdapterPosition());
+//                return true;
+//            }
+//        });
 
     }
 
@@ -83,6 +98,22 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.CustomViewHold
             this.iv_profile = (ImageView) itemView.findViewById(R.id.iv_profile);
             this.tv_name = (TextView) itemView.findViewById(R.id.tv_name);
             this.tv_content = (TextView) itemView.findViewById(R.id.tv_content);
+
+            // 람다식.
+            itemView.setOnClickListener(v -> {
+                int pos = getAbsoluteAdapterPosition();
+                if(pos != RecyclerView.NO_POSITION) {
+                    arrayList.set(pos, arrayList.get(pos));
+                    Toast.makeText(context.getApplicationContext(), "item clicked"+ pos+1, Toast.LENGTH_SHORT).show();
+                    notifyItemChanged(pos);
+                }
+            });
+//
+//            iv_profile = itemView.findViewById(R.id.iv_profile);
+//            tv_name = itemView.findViewById(R.id.tv_name);
+//            tv_content = itemView.findViewById(R.id.tv_content);
         }
+
+
     }
 }

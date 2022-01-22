@@ -30,6 +30,14 @@ public class MainActivity extends AppCompatActivity {
         arrayList = new ArrayList<>();
 
         mainAdapter = new MainAdapter(arrayList);
+        // mainAdapter에 클릭리스너 구현. 추가내용.
+        mainAdapter.setOnItemClickListener(new MainAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View v, int pos) {
+
+            }
+        });
+
         recyclerView.setAdapter(mainAdapter);
 
         Button btn_add = (Button) findViewById(R.id.btn_add);

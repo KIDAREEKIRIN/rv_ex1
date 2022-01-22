@@ -1,6 +1,9 @@
 package com.personal.rv_ex1;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +43,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.CustomViewHold
 
         context = parent.getContext(); // 정의 여부에 따라서 밑의 from 괄호 안의 내용이 달라짐.
         View view = LayoutInflater.from(context).inflate(R.layout.item_list,parent,false);
+        // 항상 new holder를 반환할 것.(새로운 인스턴스만 반환하기)
         CustomViewHolder holder = new CustomViewHolder(view); // CustomViewHolder에 대한 부분. 새롭게 정의하여 이후에 return 값을 holder로 받음.
 
         return holder;
@@ -51,6 +55,19 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.CustomViewHold
         holder.iv_profile.setImageResource(arrayList.get(position).getIv_profile());
         holder.tv_name.setText(arrayList.get(position).getTv_name());
         holder.tv_content.setText(arrayList.get(position).getTv_content());
+
+        // 람다식.
+        holder.itemView.setOnClickListener(v -> {
+            int pos = holder.getAbsoluteAdapterPosition();
+            if(pos != RecyclerView.NO_POSITION) {
+                arrayList.set(pos, arrayList.get(pos));
+                Log.d(TAG, "onBindViewHolder: 이제 토스트 띄우기");
+                Toast.makeText(context.getApplicationContext(), "item clicked"+ pos+1, Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "onBindViewHolder: 토스트까지 띄움");
+                notifyItemChanged(pos);
+                Log.d(TAG, "onBindViewHolder: itemchanged");
+            }
+        });
 
 //        holder.itemView.setTag(position);
 //        holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -99,15 +116,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.CustomViewHold
             this.tv_name = (TextView) itemView.findViewById(R.id.tv_name);
             this.tv_content = (TextView) itemView.findViewById(R.id.tv_content);
 
-            // 람다식.
-            itemView.setOnClickListener(v -> {
-                int pos = getAbsoluteAdapterPosition();
-                if(pos != RecyclerView.NO_POSITION) {
-                    arrayList.set(pos, arrayList.get(pos));
-                    Toast.makeText(context.getApplicationContext(), "item clicked"+ pos+1, Toast.LENGTH_SHORT).show();
-                    notifyItemChanged(pos);
-                }
-            });
+
 //
 //            iv_profile = itemView.findViewById(R.id.iv_profile);
 //            tv_name = itemView.findViewById(R.id.tv_name);
